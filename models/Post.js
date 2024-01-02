@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const PostSchema = mongoose.Schema({
     made_by: { 
-            type: mongoose.Schema.Types.ObjectId, 
+            type: String, 
             required: true,
             ref: 'User'
         },

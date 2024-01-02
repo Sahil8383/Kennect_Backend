@@ -6,21 +6,34 @@ const User = require('../models/User');
 const getAllPosts = async (req, res) => {
     try {
 
-        const posts = await Post.find().sort({ _id: -1 }).populate({
-            path: 'made_by',
-            model: 'User',
-            select: 'name',
-        });
+        // const posts = await Post.find().sort({ _id: -1 }).populate({
+        //     path: 'made_by',
+        //     model: 'User',
+        //     select: 'name',
+        // });
         
-        const postsWithUserNames = posts.map((post) => ({
-            _id: post._id,
-            made_by: post.made_by ? post.made_by.name : 'Unknown User',
-            content: post.content,
-            comments: post.comments,
-        }));
+        // const postsWithUserNames = posts.map((post) => ({
+        //     _id: post._id,
+        //     made_by: post.made_by ? post.made_by.name : 'Unknown User',
+        //     content: post.content,
+        //     comments: post.comments,
+        // }));
         
+        // res.status(200).json(postsWithUserNames);
+
+        const posts = await Post.find().sort({ _id: -1 })
+        
+        const postsWithUserNames = await Promise.all(posts.map(async (post) => {
+            const user = await User.findById(post.made_by);
+            return {
+                _id: post._id,
+                made_by: user.name,
+                content: post.content,
+                comments: post.comments,
+            }
+        }))
+
         res.status(200).json(postsWithUserNames);
-        
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
