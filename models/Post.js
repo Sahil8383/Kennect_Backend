@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
 
 const PostSchema = mongoose.Schema({
-    made_by: { type: String, required: true },
+    made_by: { 
+            type: mongoose.Schema.Types.ObjectId, 
+            required: true,
+            ref: 'User'
+        },
     content: { type: String, required: true },
     comments: [
         {

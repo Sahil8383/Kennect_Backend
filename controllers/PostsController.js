@@ -5,20 +5,22 @@ const User = require('../models/User');
 
 const getAllPosts = async (req, res) => {
     try {
+
         const posts = await Post.find().sort({ _id: -1 }).populate({
             path: 'made_by',
             model: 'User',
             select: 'name',
         });
-
+        
         const postsWithUserNames = posts.map((post) => ({
             _id: post._id,
-            made_by: post.made_by.name,
+            made_by: post.made_by ? post.made_by.name : 'Unknown User',
             content: post.content,
             comments: post.comments,
-            __v: post.__v,
         }));
+        
         res.status(200).json(postsWithUserNames);
+        
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
